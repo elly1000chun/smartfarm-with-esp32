@@ -4,8 +4,8 @@
 #include "network/wifiController.hpp"
 #include "network/RTCController.h"
 #include "display/OledController.h"
-#include "sensors/AHT20Controller.h"
 #include "sensors/DrynessSensorController.hpp"
+#include "sensors/DHT22Controller.h"
 
 #define SOILPIN 34
 #define GPIO_RTC_CLK 14
@@ -14,7 +14,7 @@
 #define SYNC_DATA_INTERVAL_MINUTE 15
 
 OledController oled;
-AHT20Controller aht;
+DHT22Controller dht(33);
 RTCController Rtc(GPIO_RTC_DAT, GPIO_RTC_CLK, GPIO_RTC_RST);
 
 bool isDisplayAvailable = false;
@@ -53,7 +53,7 @@ void setup() {
     Rtc.SyncRTCToNTP();
   }
 
-  isAHTAvailable = aht.Initialize();
+  isAHTAvailable = dht.Initialize();
   if(isAHTAvailable)
   {
     oled.PrintLine("HT Sensor type is AHT20.", true);
@@ -74,9 +74,9 @@ void loop()
     return;
   }
 
-  int temperature = aht.GetTemperature();
+  int temperature = dht.GetTemperature();
   String tem = "Tem: " + String(temperature) + (char)247 + "C";
-  int humidity = aht.GetHumitidy();
+  int humidity = dht.GetHumitidy();
   String hum = "Hum: " + String(humidity) + "%";
   int dryness = DrynessSensor::GetSoilDryness(SOILPIN);
   String dry = "Dry: " + String(dryness) + "%";
