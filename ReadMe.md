@@ -2,6 +2,9 @@
 ## Description
 ESP32로 간단한 Smart Farm 기능들을 구현했습니다.
 
+<img width="40%" alt="KakaoTalk_20260428_162004375" src="https://github.com/user-attachments/assets/1b3c39e2-1fec-4a28-9e18-3daaf301a27a" />
+
+
 ### 제공 기능
  - 스마트팜에 필요한 기초 센싱
    - 온습도 측정
