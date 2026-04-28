@@ -7,7 +7,7 @@
 #include "sensors/AHT20Controller.h"
 #include "sensors/DrynessSensorController.hpp"
 
-#define SOILPIN 33
+#define SOILPIN 34
 #define GPIO_RTC_CLK 14
 #define GPIO_RTC_DAT 12
 #define GPIO_RTC_RST 13
@@ -31,20 +31,20 @@ void setup() {
   isDisplayAvailable = oled.Initialize();
 
   oled.SetTextSize(1);
-  oled.PrintLine("Welcome.");
+  oled.PrintLine("Welcome.", true);
   delay(1000);
-  oled.PrintLine("Wi-Fi Connecting...");
+  oled.PrintLine("Wi-Fi Connecting...", true);
  
   int counter = 0;
   isWifiConnected = network::ConnectWifi();
 
   if(isWifiConnected == true)
   {
-    oled.PrintLine("Wi-Fi Connected.");
+    oled.PrintLine("Wi-Fi Connected.", true);
   }
   else
   {
-    oled.PrintLine("Wi-Fi Error.");   
+    oled.PrintLine("Wi-Fi Error.", true);
   }
 
   isRTCAvailable = Rtc.InitializeRTC();
@@ -56,11 +56,12 @@ void setup() {
   isAHTAvailable = aht.Initialize();
   if(isAHTAvailable)
   {
-    oled.PrintLine("Temp&Hum sensor initialized.");
+    oled.PrintLine("HT Sensor type is AHT20.", true);
+    oled.PrintLine("Temp&Hum sensor initialized.", true);
   }
   else
   {
-    oled.PrintLine("Temp&Hum sensor error.");
+    oled.PrintLine("Temp&Hum sensor error.", true);
   }
 }
 
@@ -73,8 +74,6 @@ void loop()
     return;
   }
 
-  String currentTime = Rtc.GetCurrentTimeString();
-
   int temperature = aht.GetTemperature();
   String tem = "Tem: " + String(temperature) + (char)247 + "C";
   int humidity = aht.GetHumitidy();
@@ -84,8 +83,16 @@ void loop()
 
   oled.ClearDisplay();
   oled.SetTextSize(1);
-  oled.PrintLine(currentTime);
+  if(isRTCAvailable)
+  {
+    String currentTime = Rtc.GetCurrentTimeString();
+    oled.PrintLine(currentTime);
+  }
+  else
+  {
+  }
   oled.PrintLine("");
+
   oled.SetTextSize(2);
   oled.PrintLine(tem);
   oled.PrintLine(hum);
