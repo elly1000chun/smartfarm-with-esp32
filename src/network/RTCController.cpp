@@ -7,6 +7,7 @@ uint8_t summerTime = 0; // 3600
 
 RTCController::RTCController(uint8_t ioPin, uint8_t clkPin, uint8_t cePin)
     : mywire(ioPin, clkPin, cePin), Rtc(mywire)
+    , RTCAvailable(false)
 {
 }
 
@@ -55,11 +56,14 @@ bool RTCController::InitializeRTC()
     return false;
   }
 
+  RTCAvailable = true;
   return true;
 }
 
 bool RTCController::SyncRTCToNTP()
 {
+  if(RTCAvailable == false) return false;
+
   configTime(3600 * timeZone, 3600 * summerTime, ntpServer); // init and get the time
   struct tm timeinfo;
   if (!getLocalTime(&timeinfo))
@@ -106,17 +110,51 @@ bool RTCController::SyncRTCToNTP()
   return true;
 }
 
+bool RTCController::isRTCAvailable()
+{
+  return RTCAvailable;
+}
+
 String RTCController::GetCurrentTimeString()
 {
-  if (!Rtc.IsDateTimeValid())
+  String timeString = "";
+  if (RTCAvailable)
   {
-    // Common Causes:
-    //    1) the battery on the device is low or even missing and the power line was disconnected
-    Serial.println("RTC lost confidence in the DateTime!");
-    return String("");
+    if (!Rtc.IsDateTimeValid())
+    {
+      Serial.println("RTC lost confidence in the DateTime!");
+    }
+    else
+    {
+      timeString = GetDateTimeString(Rtc.GetDateTime());
+    }
+  }
+  else
+  {
+    timeString = GetDateTimeString(GetCurrentNTPTime());
   }
 
-  return GetDateTimeString(Rtc.GetDateTime());
+  return timeString;
+}
+
+RtcDateTime RTCController::GetCurrentNTPTime()
+{
+  configTime(3600 * timeZone, 3600 * summerTime, ntpServer);
+  struct tm timeinfo;
+  if (!getLocalTime(&timeinfo))
+  {
+    Serial.println("Failed to obtain time");
+    return RtcDateTime();
+  }
+
+  RtcDateTime ntpTime = RtcDateTime(timeinfo.tm_year + 1900,
+             timeinfo.tm_mon + 1,
+             timeinfo.tm_mday,
+             timeinfo.tm_hour,
+             timeinfo.tm_min,
+             timeinfo.tm_sec);
+
+  return ntpTime;
 }
 
 String RTCController::GetDateTimeString(const RtcDateTime &dt)
@@ -137,6 +175,23 @@ String RTCController::GetDateTimeString(const RtcDateTime &dt)
 
 int RTCController::GetCurrentMinute()
 {
-  RtcDateTime rtctime = Rtc.GetDateTime();
-  return rtctime.Minute();
+  int min = -1;
+  if (RTCAvailable)
+  {
+    RtcDateTime rtctime = Rtc.GetDateTime();
+    min = rtctime.Minute();
+  }
+  else
+  {
+    configTime(3600 * timeZone, 3600 * summerTime, ntpServer);
+    struct tm timeinfo;
+    if (!getLocalTime(&timeinfo))
+    {
+      Serial.println("Failed to obtain time");
+      return -1;
+    }
+    min = timeinfo.tm_min;
+  }
+
+  return min;
 }

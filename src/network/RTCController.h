@@ -11,15 +11,18 @@ public:
   ~RTCController();
 
   bool InitializeRTC();
+  bool isRTCAvailable();
   bool SyncRTCToNTP();
   String GetCurrentTimeString();
   int GetCurrentMinute();
 
 private:
   String GetDateTimeString(const RtcDateTime& dt);
+  RtcDateTime GetCurrentNTPTime();
 
   ThreeWire mywire;
   RtcDS1302<ThreeWire> Rtc;
+  bool RTCAvailable;
 };
 
 #endif

@@ -83,14 +83,8 @@ void loop()
 
   oled.ClearDisplay();
   oled.SetTextSize(1);
-  if(isRTCAvailable)
-  {
-    String currentTime = Rtc.GetCurrentTimeString();
-    oled.PrintLine(currentTime);
-  }
-  else
-  {
-  }
+  String currentTime = Rtc.GetCurrentTimeString();
+  oled.PrintLine(currentTime);
   oled.PrintLine("");
 
   oled.SetTextSize(2);
