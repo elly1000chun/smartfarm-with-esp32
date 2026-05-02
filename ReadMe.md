@@ -2,7 +2,7 @@
 ## Description
 ESP32로 간단한 Smart Farm 기능들을 구현했습니다.
 
-<img width="40%" alt="KakaoTalk_20260428_162004375" src="https://github.com/user-attachments/assets/1b3c39e2-1fec-4a28-9e18-3daaf301a27a" />
+<img width="40%" alt="sample image" src="https://github.com/user-attachments/assets/1b3c39e2-1fec-4a28-9e18-3daaf301a27a" />
 
 
 ### 제공 기능
@@ -11,7 +11,8 @@ ESP32로 간단한 Smart Farm 기능들을 구현했습니다.
    - 토양 습도 측정
  - 측정 정보 표시 및 Cloud 전송
    - OLED Display에 정보 표시
-   - Wi-Fi를 통해 측정 정보를 Thingspeak에 기록
+   - Wi-Fi를 통해 측정 정보를 ThingSpeak에 기록
+      - [ThingSpeak Channel link](https://thingspeak.mathworks.com/channels/3365886)
  - 기타
    - RTC 모듈을 사용하여 Wi-Fi 연결 없이도 시각 관리 가능
 
